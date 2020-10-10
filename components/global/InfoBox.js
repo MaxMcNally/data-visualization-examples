@@ -101,12 +101,13 @@ class InfoBox extends React.Component {
 		gdpGrowthGraph.sort((a, b) => {
 			return a.x - b.x
 		})
-		console.log(gdpGrowthGraph)
 		return gdpGrowthGraph
 	}
 	
 	unemploymentRateData(data) {
-		const unemploymentDataGraph = data.unemployment_rate.annual_values.map((point) => {
+		console.log("Unemployment Data")
+		console.log(data)
+		const unemploymentDataGraph = data.annual_values.map((point) => {
 			return {
 				x: point.date,
 				y: point.value
@@ -115,10 +116,26 @@ class InfoBox extends React.Component {
 		unemploymentDataGraph.sort((a, b) => {
 			return a.x - b.x
 		})
-		
+		console.log("Unemployment Graph")
+		console.log(unemploymentDataGraph)
 		return unemploymentDataGraph
 	}
-
+	seriesData(data){
+		console.log("Seris Data")
+		console.log(data)
+		const dataGraph = data.annual_values.map((point) => {
+			return {
+				x: point.date,
+				y: point.value
+			}
+		})
+		dataGraph.sort((a, b) => {
+			return a.x - b.x
+		})
+		console.log("Data Graph")
+		console.log(dataGraph)
+		return dataGraph
+	}
 	render() {		
 		this.calculatePosition()
 		return (
@@ -159,7 +176,7 @@ class InfoBox extends React.Component {
 											<Vis.XAxis
 												tickFormat={tick => tick.toString()}
 												title={"Year"}
-												tickTotal={this.exchangeRateGraph(this.props.data.economy).length}
+												tickTotal={this.seriesData(this.props.data.economy.exchange_rates).length}
 											/>
 											<Vis.YAxis />
 											<Vis.VerticalGridLines />
@@ -167,7 +184,7 @@ class InfoBox extends React.Component {
 											<Vis.AreaSeries
 												className="area-series-example"
 												curve="curveNatural"
-												data={this.exchangeRateGraph(this.props.data.economy)}
+												data={this.seriesData(this.props.data.economy.exchange_rates)}
 											/>
 										</Vis.XYPlot>
 										}
@@ -189,12 +206,13 @@ class InfoBox extends React.Component {
 										<Vis.HorizontalGridLines />
 										<Vis.XAxis
 											tickFormat={tick => tick.toString()}
-											tickTotal={this.gdpGrowthData(this.props.data.economy.gdp).length}
+											tickTotal={this.seriesData(this.props.data.economy.gdp.real_growth_rate).length}
 										/>
 										<Vis.YAxis />
 										<Vis.LineSeries
+											curve={'curveMonotoneX'}
 											color={"red"}
-											data={this.gdpGrowthData(this.props.data.economy.gdp)}
+											data={this.seriesData(this.props.data.economy.gdp.real_growth_rate)}
 										/>
 										</Vis.XYPlot>
 									<GraphCaption>
@@ -202,19 +220,65 @@ class InfoBox extends React.Component {
 									</GraphCaption>
 								</Graph>
 								
-								{this.props.data.economy.gdp.inflation_rate && 
+								{this.props.data.economy?.unemployment_rate?.annual_values && 
+									<>
+										<SubHeader>
+											Unemployment
+										</SubHeader>
+										<Graph>
+										<Vis.XYPlot
+											width={430}
+											height={300}
+										>
+											<Vis.VerticalGridLines />
+											<Vis.HorizontalGridLines />
+											<Vis.XAxis
+												
+											/>
+											<Vis.YAxis 
+												tickTotal={10}
+											/>
+											<Vis.LineSeries
+												curve={'curveMonotoneX'}
+												data={this.seriesData(this.props.data.economy.unemployment_rate)}
+											/>
+										</Vis.XYPlot>
+											<GraphCaption>
+												Global Rank: {this.props.data.economy.unemployment_rate.global_rank}
+											</GraphCaption>
+										</Graph>
+									</>
+								}
+								{this.props.data.economy?.inflation_rate && 
 									<>
 										<SubHeader>
 											Inflation
 										</SubHeader>
 										<Graph>
+											<Vis.XYPlot
+												width={430}
+												height={300}
+											>
+												<Vis.VerticalGridLines />
+												<Vis.HorizontalGridLines />
+												<Vis.XAxis
+													
+												/>
+												<Vis.YAxis 
+													tickTotal={10}
+												/>
+												<Vis.LineMarkSeries
+													color={"green"}
+													curve={'curveMonotoneX'}
+													data={this.seriesData(this.props.data.economy.inflation_rate)}
+												/>
+											</Vis.XYPlot>
 											<GraphCaption>
-												Global Rank: {this.props.data.economy.gdp.inflation_rate.global_rank}
+												Global Rank: 
 											</GraphCaption>
 										</Graph>
 									</>
 								}
-								
 								
 							</Content>
 						</Tab>

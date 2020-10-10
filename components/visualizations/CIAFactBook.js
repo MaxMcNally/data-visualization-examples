@@ -17,6 +17,12 @@ const CustomLoader = styled(Loader)`
 	margin:0 auto;
 `
 
+const Map = styled(SVGMap)`
+	svg {
+		width:1200px;
+	}
+`
+
 class CIAWorldBook extends React.Component {
 	
 	constructor(props) {
@@ -40,9 +46,7 @@ class CIAWorldBook extends React.Component {
 			holdCountry : false
 		}	
 
-		this.updateMousePos = this.updateMousePos.bind(this)
-		this.mouseOverCountry = this.mouseOverCountry.bind(this)
-		this.holdCountry = this.holdCountry.bind(this)
+		this.clickCountry = this.clickCountry.bind(this)
 	}
 	
 	async componentDidMount() {
@@ -55,8 +59,6 @@ class CIAWorldBook extends React.Component {
 			loading: false,
 			currentCountry : data.world
 		})
-		console.log(this.state)
-		document.onmousemove = this.updateMousePos
 	}
 	
 	//grab CIA Factobook Data from API
@@ -66,8 +68,7 @@ class CIAWorldBook extends React.Component {
 			if (res.status >= 400) {
 				throw new Error("Bad response from server");
 			}
-			console.log("Data Response")
-			console.log(res.body)
+
 			const data = await res.json();
 			return data
 		}
@@ -78,31 +79,18 @@ class CIAWorldBook extends React.Component {
 		
 	}
 	
-	updateMousePos(e) {
-		if (this.state.holdCountry) return 
-		this.setState({
-			mousePos:
-				{ x: e.pageX, y: e.pageY }
-		})
-	}
 	
-	mouseOverCountry(e) {
-		if (this.state.holdCountry) return 
-		console.log("Mouse Pos")
-		console.log({x:e.pageX,y:e.pageY})
+	clickCountry(e) {
 		if (e.target && e.target?.attributes?.name?.value && e.target?.attributes?.name?.value !== this.state.currentCountry) {
 			return this.setState({
 				currentCountry: e.target.attributes.name.value,
 				countryData: this.findCountryData(e.target.attributes.name.value),
+				holdCountry : !this.state.holdCountry,
+				mousePos: { x: e.pageX, y: e.pageY }
 			})
 		}
-		this.updateMousePos(e)
 	}
 	
-	holdCountry(e) {
-		console.log("Holding Country", e.target?.attributes?.name?.value)
-		this.setState({holdCountry : !this.state.holdCountry})
-	}
 
 	//match country name to CIA Factbook data
 	/* 
@@ -139,10 +127,9 @@ class CIAWorldBook extends React.Component {
 				/>
 				}
 				
-					<SVGMap
+					<Map
 						map={this.state.worldMap}
-						onLocationMouseOver={this.mouseOverCountry}
-						onLocationClick={this.holdCountry}
+						onLocationClick={this.clickCountry}
 					/>
 				</>
 			}
