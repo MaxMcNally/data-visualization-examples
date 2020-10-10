@@ -14,7 +14,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar bg="light" expand="lg">
-        <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+        <Navbar.Brand href="#home"><h1>Data Visualization Examples</h1></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
@@ -32,7 +32,7 @@ export default function Home() {
         </Navbar.Collapse>
       </Navbar>
       <Row>
-      <h1>Data Visualization Examples</h1>
+      
       </Row>
       <Row>
       <Col md={12}>

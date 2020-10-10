@@ -81,7 +81,8 @@ class CIAWorldBook extends React.Component {
 	
 	
 	clickCountry(e) {
-		if (e.target && e.target?.attributes?.name?.value && e.target?.attributes?.name?.value !== this.state.currentCountry) {
+		console.log("Click")
+		if (e?.target && e.target?.attributes?.name?.value && e.target?.attributes?.name?.value !== this.state.currentCountry) {
 			return this.setState({
 				currentCountry: e.target.attributes.name.value,
 				countryData: this.findCountryData(e.target.attributes.name.value),
@@ -89,9 +90,17 @@ class CIAWorldBook extends React.Component {
 				mousePos: { x: e.pageX, y: e.pageY }
 			})
 		}
+		else {
+			return this.setState({
+				currentCountry: undefined,
+				countryData: undefined,
+				holdCountry : false,
+				mousePos: { x: e.pageX, y: e.pageY }
+		})
 	}
 	
-
+	}
+	
 	//match country name to CIA Factbook data
 	/* 
 		@param name : String
@@ -113,25 +122,29 @@ class CIAWorldBook extends React.Component {
 				/>
 			}
 			{!this.state.loading && 
-				<>
-				{this.state.countryData && 
-				<InfoBox
-					pos={
-						{
-							x : this.state.mousePos.x,
-							y : this.state.mousePos.y
+				<div onClick={this.clickCountry}>
+					{this.state.countryData && 
+					<InfoBox
+						pos={
+							{
+								x : this.state.mousePos.x,
+								y : this.state.mousePos.y
+							}
 						}
+						data={this.state.countryData}
+						onClick={(e)=>{
+							console.log("Click Event in Info Box")
+							console.log(e)
+						}}
+					
+					/>
 					}
-					data={this.state.countryData}
-				
-				/>
-				}
 				
 					<Map
 						map={this.state.worldMap}
 						onLocationClick={this.clickCountry}
 					/>
-				</>
+				</div>
 			}
 			
 		</>
